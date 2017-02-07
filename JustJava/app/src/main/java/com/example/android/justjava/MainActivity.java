@@ -1,9 +1,11 @@
 package com.example.android.justjava;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,6 +22,36 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Button order = (Button) findViewById(R.id.order);
+
+        // Set a click listener on that View
+        order.setOnClickListener(new View.OnClickListener() {
+            // The code in this method will be executed when the numbers category is clicked on.
+            @Override
+            public void onClick(View view) {
+                // Create a new intent to open the {@link NumbersActivity}
+                Intent summaryIntent = new Intent(MainActivity.this, SummaryActivity.class);
+
+                EditText nameView = (EditText) findViewById(R.id.name);
+                String name = String.valueOf(nameView.getText());
+
+                CheckBox whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
+                boolean hasWhippedCream = whippedCreamCheckbox.isChecked();
+                Log.v("Main Activity", "Has whipped cream? " + hasWhippedCream);
+
+                CheckBox chocolateCheckBox = (CheckBox) findViewById(R.id.chocolate_checkbox);
+                boolean hasChocolate = chocolateCheckBox.isChecked();
+                Log.v("Main Activity", "Has chocolate? " + hasChocolate);
+
+                int price = calculatePrice(hasWhippedCream, hasChocolate);
+                String priceMessage = createOrderSummary(name, price, hasWhippedCream, hasChocolate);
+
+                summaryIntent.putExtra("EXTRA_ID", priceMessage);
+                // Start the new activity
+                startActivity(summaryIntent);
+            }
+        });
     }
 
     /**
@@ -47,35 +79,6 @@ public class MainActivity extends ActionBarActivity {
         Log.v("Decremnet View", "Quantity: " + quantity);
     }
 
-    /**
-     * This method is called when the order button is clicked.
-     */
-    public void submitOrder(View view) {
-        EditText nameView = (EditText) findViewById(R.id.name);
-        String name = String.valueOf(nameView.getText());
-
-        CheckBox whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
-        boolean hasWhippedCream = whippedCreamCheckbox.isChecked();
-        Log.v("Main Activity", "Has whipped cream? " + hasWhippedCream);
-
-        CheckBox chocolateCheckBox = (CheckBox) findViewById(R.id.chocolate_checkbox);
-        boolean hasChocolate = chocolateCheckBox.isChecked();
-        Log.v("Main Activity", "Has chocolate? " + hasChocolate);
-
-        int price = calculatePrice(hasWhippedCream, hasChocolate);
-        String priceMessage = createOrderSummary(name,price,hasWhippedCream,hasChocolate);
-
-//        Intent intent = new Intent(Intent.ACTION_SENDTO);
-//        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-//        intent.putExtra(Intent.EXTRA_SUBJECT, "Just Java order for " + name);
-//        intent.putExtra(Intent.EXTRA_TEXT, priceMessage);
-//        if (intent.resolveActivity(getPackageManager()) != null) {
-//            startActivity(intent);
-//        }
-
-        displayMessage(priceMessage);
-
-    }
 
         /**
          * This method displays the given quantity value on the screen.
@@ -87,20 +90,35 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
+
     /**
-     * This method displays the given text on the screen.
+     * This method is called when the order button is clicked.
      */
-    private void displayMessage(String message) {
-        TextView orderSummaryView = (TextView) findViewById(R.id.order_summary_text_view);
-        orderSummaryView.setText(message);
-    }
+//   public void submitOrder(View view) {
+//        EditText nameView = (EditText) findViewById(R.id.name);
+//        String name = String.valueOf(nameView.getText());
+//
+//        CheckBox whippedCreamCheckbox = (CheckBox) findViewById(R.id.whipped_cream_checkbox);
+//        boolean hasWhippedCream = whippedCreamCheckbox.isChecked();
+//        Log.v("Main Activity", "Has whipped cream? " + hasWhippedCream);
+//
+//        CheckBox chocolateCheckBox = (CheckBox) findViewById(R.id.chocolate_checkbox);
+//        boolean hasChocolate = chocolateCheckBox.isChecked();
+//        Log.v("Main Activity", "Has chocolate? " + hasChocolate);
+//
+//        int price = calculatePrice(hasWhippedCream, hasChocolate);
+//        String priceMessage = createOrderSummary(name,price,hasWhippedCream,hasChocolate);
+//
+//        displayMessage(priceMessage);
+//
+//     }
 
     /**
      * Calculates the price of the order.
      *
      * @param hasWhippedCream is true when the checkbox is marked
      * @param hasChocolate is true when the checkbox is marked
-     *                     
+     *
      */
     private int calculatePrice(boolean hasWhippedCream, boolean hasChocolate) {
         int price = quantity * 5;
@@ -123,4 +141,9 @@ public class MainActivity extends ActionBarActivity {
                 "\nThank you!";
         return orderMessage;
     }
+
+
+
+
+
 }
